@@ -2,6 +2,9 @@ package com.abranlezama.fullstackchatapplication.service.imp;
 
 import com.abranlezama.fullstackchatapplication.dto.authentication.AuthRequest;
 import com.abranlezama.fullstackchatapplication.dto.authentication.TokenResponse;
+import com.abranlezama.fullstackchatapplication.exception.AuthenticationException;
+import com.abranlezama.fullstackchatapplication.exception.ExceptionMessages;
+import com.abranlezama.fullstackchatapplication.exception.UsernameTakenException;
 import com.abranlezama.fullstackchatapplication.model.User;
 import com.abranlezama.fullstackchatapplication.repository.UserRepository;
 import com.abranlezama.fullstackchatapplication.service.AuthenticationService;
@@ -26,7 +29,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         Optional<User> userOptional = userRepository.findByUsername(authRequest.username());
 
-        if (userOptional.isPresent()) throw new RuntimeException("Username is taken");
+        if (userOptional.isPresent()) throw new UsernameTakenException(ExceptionMessages.USERNAME_TAKEN);
 
         User user = User.builder()
                 .username(authRequest.username())
@@ -45,10 +48,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
     @Override
     public TokenResponse login(AuthRequest authRequest) {
         User user = userRepository.findByUsername(authRequest.username())
-                .orElseThrow(() -> new RuntimeException("Wrong credentials"));
+                .orElseThrow(() -> new AuthenticationException(ExceptionMessages.WRONG_CREDENTIALS));
 
         if (!passwordEncoder.matches(authRequest.password(), user.getPassword())) {
-            throw new RuntimeException("Wrong credentials");
+            throw new AuthenticationException(ExceptionMessages.WRONG_CREDENTIALS);
         }
 
         return new TokenResponse(jwtService.generateToken(user));
