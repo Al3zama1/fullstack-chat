@@ -1,1 +1,10 @@
-
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      username: test
+      password: test
+      database: chatapp
+      port: 27017
+      host: localhost
+      auto-index-creation: true
