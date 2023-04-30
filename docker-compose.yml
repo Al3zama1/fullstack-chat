@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  mongo:
+    image: mongo:5.0.17
+    ports:
+      - "27017:27017"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: test
+      MONGO_INITDB_ROOT_PASSWORD: test
